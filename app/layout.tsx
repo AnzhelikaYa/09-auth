@@ -7,18 +7,16 @@ import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 
 
-const roboto = Roboto({
+export const roboto = Roboto({
   weight: ['400', '500', '700'],
   subsets: ['latin'],
   variable: '--font-roboto',
   display: 'swap',
 });
 
-
 export const metadata: Metadata = {
   title: 'NoteHub',
   description: 'NoteHub — application for creating, organizing, and managing notes',
-
   openGraph: {
     title: 'NoteHub',
     description: 'A convenient app for saving and organizing your notes',
