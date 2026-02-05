@@ -18,9 +18,10 @@ export default function SignUpPage() {
     const password = formData.get("password") as string;
 
     try {
-      await register(email, password);
+      await register({ email, password });
       router.push("/profile");
-    } catch (eror) {
+    } catch (err) {
+      console.error(err);
       setError("Registration failed");
     }
   };
