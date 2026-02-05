@@ -11,29 +11,28 @@ export default function SignInPage() {
     const { setUser } = useAuth();
     const [error, setError] = useState<string>("");
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError("");
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setError("");
 
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+        const formData = new FormData(event.currentTarget);
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
 
-    try {
-      const response = await login({ email, password });
+        try {
+            const response = await login({ email, password });
 
-      if (response.user) {
-        setUser(response.user);
-        router.push("/profile");
-      } else {
-        setError(response.message || "Login failed");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong. Please try again.");
-    }
-  };
-    
+            if (response.user) {
+                setUser(response.user);
+                router.push("/profile");
+            } else {
+                setError(response.message || "Login failed");
+            }
+        } catch (err) {
+            console.error(err);
+            setError("Something went wrong. Please try again.");
+        }
+    };
 
     return (
         <main className={css.mainContent}>
@@ -48,10 +47,10 @@ export default function SignInPage() {
                     <input id="password" type="password" name="password" className={css.input} required />
                 </div>
                 <div className={css.actions}>
-                <button type="submit" className={css.submitButton}>Log in</button>
+                    <button type="submit" className={css.submitButton}>Log in</button>
                 </div>
                 <p className={css.error}>{error}</p>
             </form>
         </main>
-    )
+    );
 }
