@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { checkSession } from "@/lib/api/clientApi";
+import { checkSession, getCurrentUser } from "@/lib/api/clientApi";
 import { useAuth } from "@/lib/store/authStore";
 
 interface AuthProviderProps {
@@ -14,36 +14,34 @@ const publicRoutes = ["/sign-in", "/sign-up"];
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
-  const setUser = useAuth((state) => state.setUser);
-  const logout = useAuth((state) => state.logout);
+  const { user, setUser, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
     const initAuth = async () => {
       setLoading(true);
+
       try {
-        const user = await checkSession();
 
-        if (user) {
-          setUser(user);
+        const sessionUser = await checkSession();
 
-        
+        if (sessionUser) {
+          const currentUser = await getCurrentUser();
+          setUser(currentUser);
+
           if (publicRoutes.some((route) => pathname.startsWith(route))) {
             router.replace("/profile");
           }
         } else {
-          setUser(null);
           logout();
 
-          
           if (privateRoutes.some((route) => pathname.startsWith(route))) {
             router.replace("/sign-in");
           }
         }
       } catch (error) {
         console.error("AuthProvider error:", error);
-        setUser(null);
         logout();
 
         if (privateRoutes.some((route) => pathname.startsWith(route))) {
@@ -55,16 +53,16 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     };
 
     initAuth();
-  }, [pathname, setUser, logout, router]);
+  }, [pathname, router, setUser, logout]);
 
   
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
         <div
           style={{
-            width: "40px",
-            height: "40px",
+            width: 40,
+            height: 40,
             border: "4px solid #ccc",
             borderTopColor: "#0070f3",
             borderRadius: "50%",
@@ -82,8 +80,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     );
   }
 
-  
-  if (!useAuth.getState().user && privateRoutes.some((route) => pathname.startsWith(route))) {
+
+  if (!user && privateRoutes.some((route) => pathname.startsWith(route))) {
     return null;
   }
 
